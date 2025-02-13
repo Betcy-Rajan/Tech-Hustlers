@@ -67,11 +67,11 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/on_boarding_images/
-    - assets/animations/
+    - assets/images/on_boarding_images/
+    - assets/images/animations/
     - assets/logos/
   #   - assets/icons/
-    - assets/fonts/
+    - assets/images/fonts/
   #   - assets/icons/categories/
   #   - assets/images/banners/
   #   - assets/images/products/

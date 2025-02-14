@@ -12,8 +12,8 @@ import 'package:nearsq/utilis/constants/colors.dart';
 import 'package:nearsq/utilis/helpers/helper_functions.dart';
 
 
-class NavigationMenu extends StatelessWidget {
-  const NavigationMenu({super.key});
+class NavigationMenuOfficial extends StatelessWidget {
+  const NavigationMenuOfficial({super.key});
 
 
   @override
@@ -33,7 +33,7 @@ class NavigationMenu extends StatelessWidget {
         indicatorColor: darkMode ? TColors.white.withOpacity(0.1) : TColors.black.withOpacity(0.1),
         destinations: const  [
            NavigationDestination(icon: Icon(Iconsax.home),label: 'Home',),
-           NavigationDestination(icon: Icon(Iconsax.shop),label: 'Emergency',),
+           NavigationDestination(icon: Icon(Iconsax.shop),label: 'HeaTmAP',),
            NavigationDestination(icon: Icon(Iconsax.heart),label: 'Home',),
            NavigationDestination(icon: Icon(Iconsax.user),label: 'Home',),
         ]

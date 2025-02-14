@@ -6,10 +6,12 @@ class UserModel {
   final String id;
   final String username;
   final String email;
+  final String role;
   String firstName;
   String lastName;
   String phoneNumber;
   String profilePicture;
+
 
   UserModel({
     required this.id,
@@ -19,6 +21,7 @@ class UserModel {
     required this.lastName,
     required this.phoneNumber,
     required this.profilePicture,
+    required this.role,
   });
 
   String get fullName => '$firstName $lastName';
@@ -46,7 +49,10 @@ class UserModel {
       username: "",
       email: "",
       phoneNumber: "",
-      profilePicture: "");
+      profilePicture: "", 
+      role: ''
+      
+      );
 
   // Convert model to JSON structure for storing data in Firebase.
   Map<String, dynamic> toJson() {
@@ -57,6 +63,7 @@ class UserModel {
       'Email': email,
       'PhoneNumber': phoneNumber,
       'ProfilePicture': profilePicture,
+      'Role': role,
     };
   }
 
@@ -72,6 +79,7 @@ class UserModel {
       email: data['Email'] ?? "",
       phoneNumber: data['PhoneNumber'] ?? "",
       profilePicture: data['ProfilePicture'] ?? "",
+      role: data['Role'] ?? "",
     );
   }
 }

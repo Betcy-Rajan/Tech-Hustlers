@@ -5,6 +5,7 @@ import 'package:nearsq/data/repositories/authentication/authentication_repositor
 import 'package:nearsq/data/repositories/user/user_repository.dart';
 import 'package:nearsq/features/authentication/screens/signup/verify_email.dart';
 import 'package:nearsq/features/personalization/models/user_models.dart';
+import 'package:nearsq/navigation_menu.dart';
 import 'package:nearsq/utilis/constants/image_strings.dart';
 import 'package:nearsq/utilis/helpers/network_manager.dart';
 import 'package:nearsq/utilis/popups/full_screen_loaders.dart';
@@ -21,6 +22,7 @@ class SignupController extends GetxController {
   final phoneNumber = TextEditingController(); //Controller for Phone Number
   final username = TextEditingController(); //Controller for First Name
   final password = TextEditingController(); //Controller for Password
+  final role = TextEditingController(); //Controller for Role
   GlobalKey<FormState> signupFormKey = GlobalKey<FormState>(); //Form Key
 
 
@@ -48,7 +50,7 @@ class SignupController extends GetxController {
       return;
     }
     //Register User in Firebase Authentication and Save User Data in Firebase
-   UserCredential userCredential = await AuthenticationRepository.instance.registerWithEmailAndPassword(email.text.trim(), password.text.trim());
+   UserCredential userCredential = await AuthenticationRepository.instance.registerWithEmailAndPassword(email.text.trim(), password.text.trim(),role.text.trim());
     //Save Authenticated User Data in Firbase Firenearsq
     final newUser = UserModel(
       id: userCredential.user!.uid,
@@ -58,6 +60,7 @@ class SignupController extends GetxController {
       phoneNumber: phoneNumber.text.trim(),
       username: username.text.trim(),
       profilePicture: '',
+      role: role.text.trim(),
     );
     final userRepository = Get.put(UserRepository());
     await userRepository.saveUserRecord(newUser);
@@ -67,7 +70,7 @@ class SignupController extends GetxController {
     //Show Success Message
     TLoaders.successSnackBar(title: 'Account Created Successfully',message: 'Please verify your email to continue');
     //Move to Verify Email Screen
-    Get.to(() =>  VerifyEmailScreen(email: email.text.trim(),));
+    Get.to(() =>  const NavigationMenu());
 
   } catch (e) {
     //Show Error Message

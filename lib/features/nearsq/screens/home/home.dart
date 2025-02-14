@@ -8,6 +8,7 @@ import 'package:nearsq/common/widgets/texts/sections_heading.dart';
 import 'package:nearsq/features/nearsq/screens/home/widgets/home_appbar.dart';
 import 'package:nearsq/features/nearsq/screens/home/widgets/home_categories.dart';
 import 'package:nearsq/features/nearsq/screens/home/widgets/promo_slider.dart';
+import 'package:nearsq/navigation_drawer_widget.dart';
 import 'package:nearsq/utilis/constants/image_strings.dart';
 import 'package:nearsq/utilis/constants/sizes.dart';
 
@@ -22,10 +23,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return   Scaffold(
+      drawer: NavigationDrawerWidget(),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            
+            
               const TPrimaryHeaderContainer(
+                
                child:  Column(
                 children: [
                   THomeAppBar(),

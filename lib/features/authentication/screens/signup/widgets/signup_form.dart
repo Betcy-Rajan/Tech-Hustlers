@@ -87,6 +87,17 @@ class TSignupForm extends StatelessWidget {
                  ),
            ),
            const SizedBox(height: TSizes.spaceBtwInputFields,),
+            //Role
+           TextFormField(
+                  controller: controller.role,
+                  validator: (value) => TValidator.validateEmptyText(value, 'User Name'),
+               expands: false,
+                 decoration:  const InputDecoration(
+                   hintText: 'Role',
+                   prefixIcon: Icon(Iconsax.user_edit),
+                 ),
+           ),
+           const SizedBox(height: TSizes.spaceBtwInputFields,),
            //password
            Obx(
              () =>  TextFormField(

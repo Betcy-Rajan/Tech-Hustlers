@@ -16,7 +16,7 @@ class UserRepository extends GetxController {
   // Example method to update userName
  Future<void> saveUserRecord(UserModel user) async {
     try {
-      await _db.collection('Users').doc(user.id).set(user.toJson());
+      await _db.collection('users').doc(user.id).set(user.toJson());
     } on FirebaseException catch (e) {
       throw TFirebaseException(e.code).message;
     } on FormatException catch (_) {
@@ -27,4 +27,5 @@ class UserRepository extends GetxController {
       throw 'Something went wrong.Please try again';
     }
   }
+
 }

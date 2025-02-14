@@ -182,7 +182,7 @@ class AuthenticationRepository extends GetxController {
       if(username=="official") {
         Get.offAll(() => const NavigationMenuOfficial());
       } else {
-        Get.offAll(() => const NavigationMenu());
+        Get.offAll(() =>  NavigationMenu());
       }
     }
   }

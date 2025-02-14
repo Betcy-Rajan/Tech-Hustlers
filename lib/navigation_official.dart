@@ -33,8 +33,8 @@ class NavigationMenuOfficial extends StatelessWidget {
         indicatorColor: darkMode ? TColors.white.withOpacity(0.1) : TColors.black.withOpacity(0.1),
         destinations: const  [
            NavigationDestination(icon: Icon(Iconsax.home),label: 'Home',),
-           NavigationDestination(icon: Icon(Iconsax.shop),label: 'HeaTmAP',),
-           NavigationDestination(icon: Icon(Iconsax.heart),label: 'Home',),
+           NavigationDestination(icon: Icon(Iconsax.shop),label: 'Heatmap',),
+           NavigationDestination(icon: Icon(Iconsax.heart),label: 'Camps',),
            NavigationDestination(icon: Icon(Iconsax.user),label: 'Home',),
         ]
       )),
@@ -44,7 +44,7 @@ class NavigationMenuOfficial extends StatelessWidget {
 }
 class NavigationMenuController extends GetxController {
   final RxInt selectedIndex = 0.obs;
-  final screens = [const HomeScreen(),CampScreen(),const SettingsScreen()];
+  final screens = [const MyHomePage(),CampScreen(),const SettingsScreen()];
   void updateIndex(int index) {
     selectedIndex.value = index;
   }

@@ -49,6 +49,13 @@ dependencies:
   url_launcher: ^6.3.0
   smooth_page_indicator: ^1.2.0+3
   carousel_slider: ^5.0.0
+  flutter_map: ^6.0.0
+  flutter_map_heatmap: any # or the latest version on Pub
+  latlong2: ^0.9.0
+  rxdart: ^0.27.7
+
+
+
  
 
   # State management
@@ -74,7 +81,7 @@ flutter:
   assets:
     - assets/images/on_boarding_images/
     - assets/images/animations/
-    - assets/logos/
+    - assets/images/logos/
   #   - assets/icons/
     - assets/images/fonts/
   #   - assets/icons/categories/

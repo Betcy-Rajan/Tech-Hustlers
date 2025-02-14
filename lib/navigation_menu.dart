@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:nearsq/features/personalization/models/user_models.dart';
+// import 'package:nearsq/features/users/Emergency/screens/location_screen.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:nearsq/features/users/Emergency/screens/locationscreen.dart';
+
 import 'package:nearsq/features/Camp/screens/camp.dart';
 import 'package:nearsq/features/personalization/screens/settings/settings.dart';
-import 'package:nearsq/features/nearsq/screens/home/home.dart';
+// import 'package:nearsq/features/nearsq/screens/home/home.dart';
 // import 'package:nearsq/features/shop/screens/nearsq/nearsq.dart';
 // import 'package:nearsq/features/shop/screens/whishlist/whishlist.dart';
 import 'package:nearsq/utilis/constants/colors.dart';
@@ -19,8 +23,12 @@ class NavigationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
+    
     final  controller = Get.put(NavigationMenuController());
     final darkMode = THelperFunctions.isDarkMode(context);
+
+
+    
 
     return Scaffold(
       bottomNavigationBar: Obx(
@@ -44,7 +52,7 @@ class NavigationMenu extends StatelessWidget {
 }
 class NavigationMenuController extends GetxController {
   final RxInt selectedIndex = 0.obs;
-  final screens = [const HomeScreen(),CampScreen(),const SettingsScreen()];
+  final screens = [LocationScreen(),CampScreen(),const SettingsScreen()];
   void updateIndex(int index) {
     selectedIndex.value = index;
   }

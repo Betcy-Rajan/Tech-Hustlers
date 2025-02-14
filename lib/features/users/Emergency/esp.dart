@@ -46,15 +46,17 @@ class SendESP extends StatelessWidget {
     return Center(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 39, 39, 39)),
+          backgroundColor: Colors.blue,
+        ),
         onPressed: () => sendMessageToESP(
           context,
           '/6969/${location.latitude},${location.longitude}/6969/',
         ),
-        child: Text(
-          'Send SOS',
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
+        child: Text("Online SOS",
+            style: Theme.of(context)
+              .textTheme
+              .headlineLarge!
+              .apply(color: Colors.white)),
       ),
     );
   }

@@ -164,6 +164,7 @@ class _LocationScreenState extends State<LocationScreen> {
                         : SizedBox(
                             height: 150,
                             width: 250,
+                            
                             child: SendESP(
                               location: LatLng(
                                 locationController.latitude.value,

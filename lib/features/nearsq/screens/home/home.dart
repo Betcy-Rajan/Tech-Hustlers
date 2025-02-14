@@ -1,98 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:iconsax/iconsax.dart';
-// import 'package:nearsq/common/widgets/custom_shapes/containers/primary_header_container.dart';
-// import 'package:nearsq/common/widgets/custom_shapes/containers/search_container.dart';
-// import 'package:nearsq/common/widgets/layouts/grid_layout.dart';
-// import 'package:nearsq/common/widgets/products/product_cards/product_card_vertical.dart';
-// import 'package:nearsq/common/widgets/texts/sections_heading.dart';
-// import 'package:nearsq/features/nearsq/screens/home/widgets/home_appbar.dart';
-// import 'package:nearsq/features/nearsq/screens/home/widgets/home_categories.dart';
-// import 'package:nearsq/features/nearsq/screens/home/widgets/promo_slider.dart';
-// import 'package:nearsq/navigation_drawer_widget.dart';
-// import 'package:nearsq/utilis/constants/image_strings.dart';
-// import 'package:nearsq/utilis/constants/sizes.dart';
-
-
-
-
-
-
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return   Scaffold(
-//       drawer: NavigationDrawerWidget(),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           children: [
-            
-            
-//               const TPrimaryHeaderContainer(
-                
-//                child:  Column(
-//                 children: [
-//                   THomeAppBar(),
-//                    SizedBox(height: TSizes.spaceBtwSections,),
-//                   TSearchContainer(
-//                     text: 'Search in nearsq',
-//                     icon: Iconsax.search_normal,
-//                   ),
-//                   SizedBox(height: TSizes.spaceBtwSections,),
-//                   Padding(padding: 
-//                   EdgeInsets.only(left: TSizes.defaultSpace,),
-//                   child: Column(
-//                     children: [
-//                       TSectionHeading(
-//                         title: 'Popular Categories',
-//                         showActionButton: false,
-//                         textColor: Colors.white,
-//                       ),
-//                       SizedBox(height: TSizes.spaceBtwItems,),
-
-//                       //categories
-//                       THomeCategories(),
-                    
-//                     ],
-//                   ),
-
-//                   ),
-//                   SizedBox(height: TSizes.spaceBtwSections,)
-
-//                 ],
-//               ),
-//             ),
-//              Padding(
-//                padding: const EdgeInsets.all(TSizes.defaultSpace),
-//                child: Column(
-//                  children: [
-//                     const TPromoSlider(
-//                     banners: [ TImages.promoBanner1,TImages.promoBanner2, TImages.promoBanner3,],),
-//                      const SizedBox(height: TSizes.spaceBtwSections,),
-//                      //heading
-//                      TSectionHeading(
-//                        title: 'Popular Products',
-//                        onPressed: () {},
-//                        ),
-//                        const SizedBox(height: TSizes.spaceBtwItems,),
-//                     //Popular Products
-//                       TGridLayout(
-//                         itemCount: 4,
-//                         itemBuilder: (_, index) => const TProductCardVertical(),
-//                       ),
-                    
-//                  ],
-//                ),
-//              ),
-            
-//           ],
-//         ),
-
-//       )
-//       );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_heatmap/flutter_map_heatmap.dart';
@@ -101,25 +6,36 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:async';
 import 'package:flutter/widgets.dart';
-import 'package:nearsq/firebase_options.dart';
-// import 'firebase_options.dart';
-import 'package:rxdart/rxdart.dart';
+
+import 'package:rxdart/rxdart.dart' as rxdart;
+import 'package:geolocator/geolocator.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:get/get.dart';
 
 class SOSRequest {
   final LatLng location;
   final String msg;
   final String name;
-  final String phone;
-  final String timestamp;
+  final String url; // Changed from phone to url for scrap data
+  final String
+      source; // Add source to differentiate between online/offline/scrap
+  String status; // Make this mutable
 
   SOSRequest({
     required this.location,
     required this.msg,
     required this.name,
-    required this.phone,
-    required this.timestamp,
+    required this.url,
+    required this.source,
+    this.status = 'pending',
   });
 }
+
+
+
 
 
 class MyHomePage extends StatefulWidget {
@@ -130,31 +46,76 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  StreamController<void> get _rebuildStream => StreamController<void>();
-  
-  // Define the data points correctly
-  final List<WeightedLatLng> data = [
-    // High severity areas
-    WeightedLatLng(LatLng(9.9312, 76.2673), 100.0), // Fort Kochi
-    WeightedLatLng(LatLng(9.9894, 76.2956), 90.0),  // Vypeen
-    WeightedLatLng(LatLng(9.9816, 76.2999), 85.0),  // Bolgatty
-    
-    // Medium severity areas
-    WeightedLatLng(LatLng(9.9657, 76.2421), 60.0),  // Mattancherry
-    WeightedLatLng(LatLng(9.9671, 76.2858), 55.0),  // Willingdon Island
-    WeightedLatLng(LatLng(9.9450, 76.3115), 50.0),  // Ernakulam South
-    
-    // Low severity areas
-    WeightedLatLng(LatLng(9.9816, 76.3234), 30.0),  // Kaloor
-    WeightedLatLng(LatLng(9.9975, 76.3089), 25.0),  // Edappally
-    WeightedLatLng(LatLng(9.9339, 76.3142), 20.0),  // Thevara
-  ];
+  final rescuerController = Get.put(RescuerController());
+  late DatabaseReference databaseRef;
+  Timer? _locationTimer; // Keep this for the timer
 
-  // Define sharp color boundaries without transitions
+  @override
+  void initState() {
+    super.initState();
+    databaseRef = FirebaseDatabase.instance.ref();
+  }
+
+  // Remove these fields:
+  // final _rescuerLocationNotifier = ValueNotifier<LatLng?>(null);
+  // Timer? _locationTimer;
+  // Position? _currentPosition;
+  // LatLng? _rescuerLocation;
+  // late DatabaseReference databaseRef;
+
+  // Remove the static data points
+  List<WeightedLatLng> _getHeatmapData(List<SOSRequest> requests) {
+    List<WeightedLatLng> heatmapData = [];
+
+    for (var request in requests) {
+      // Assign weights based on status and source
+      double weight = _getRequestWeight(request);
+
+      heatmapData.add(WeightedLatLng(request.location, weight));
+    }
+
+    return heatmapData;
+  }
+
+  // Helper method to determine weight based on request properties
+  double _getRequestWeight(SOSRequest request) {
+    // Base weight
+    double weight = 50.0;
+
+    // Adjust weight based on status
+    switch (request.status) {
+      case 'pending':
+        weight *= 2.0; // Higher weight for pending requests
+        break;
+      case 'responding':
+        weight *= 1.5; // Medium weight for responding
+        break;
+      case 'rescued':
+        weight *= 0.5; // Lower weight for rescued
+        break;
+    }
+
+    // Adjust weight based on source
+    switch (request.source) {
+      case 'online':
+        weight *= 1.2; // Higher priority for real-time requests
+        break;
+      case 'offline':
+        weight *= 1.0; // Normal priority
+        break;
+      case 'scrap':
+        weight *= 0.8; // Lower priority for scraped data
+        break;
+    }
+
+    return weight;
+  }
+
+  // Keep the existing gradients
   final Map<double, MaterialColor> gradients = {
-    0.0: Colors.green,     // Safe areas (0-0.33)
-    0.34: Colors.yellow,   // Warning areas (0.34-0.66)
-    0.67: Colors.red,      // Danger areas (0.67-1.0)
+    0.0: Colors.green, // Safe areas (0-0.33)
+    0.34: Colors.yellow, // Warning areas (0.34-0.66)
+    0.67: Colors.red, // Danger areas (0.67-1.0)
   };
 
   int index = 0;
@@ -198,8 +159,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             msg: sosData['msg']?.toString() ?? 'No message',
             name: sosData['name']?.toString() ?? 'No name',
-            phone: sosData['phone']?.toString() ?? 'No phone',
-            timestamp: sosData['timestamp']?.toString() ?? 'No timestamp',
+            url: sosData['phone']?.toString() ?? '',
+            source: 'online',
+            status: sosData['status']?.toString() ?? 'pending',
           );
         }).toList();
       } catch (e) {
@@ -253,9 +215,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             msg: sosData['msg']?.toString() ?? 'No message',
             name: sosData['name']?.toString() ?? 'No name',
-            phone: sosData['phone']?.toString() ?? 'No phone',
-            timestamp: sosData['timestamp']?.toString() ?? 'No timestamp',
-                
+            url: sosData['phone']?.toString() ?? '',
+            source: 'offline',
+            status: sosData['status']?.toString() ?? 'pending',
           );
         }).toList();
       } catch (e) {
@@ -265,42 +227,109 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  // Add this method to combine both streams
+  // Add this method to fetch scrap SOS requests
+  Stream<List<SOSRequest>> _getScrapSOSRequests() {
+    return FirebaseFirestore.instance
+        .collection('sos')
+        .doc('scrap')
+        .snapshots()
+        .map((doc) {
+      if (!doc.exists) {
+        print('Scrap document does not exist');
+        return [];
+      }
+
+      try {
+        final data = doc.data();
+        if (data == null) return [];
+
+        final searchAndRescue = data['search_and_rescue'] as List?;
+        if (searchAndRescue == null) return [];
+
+        return searchAndRescue.where((sosData) {
+          try {
+            final lat = double.tryParse(sosData['lat'].toString());
+            final lon = double.tryParse(sosData['lon'].toString());
+            return lat != null && lon != null;
+          } catch (e) {
+            print('Invalid location data in scrap: $e');
+            return false;
+          }
+        }).map<SOSRequest>((sosData) {
+          return SOSRequest(
+            location: LatLng(
+              double.parse(sosData['lat'].toString()),
+              double.parse(sosData['lon'].toString()),
+            ),
+            msg: sosData['message']?.toString() ?? 'No message',
+            name: sosData['user']?.toString() ?? 'No name',
+            url: sosData['url']?.toString() ?? '',
+            source: 'scrap',
+            status: sosData['status']?.toString() ?? 'pending',
+          );
+        }).toList();
+      } catch (e) {
+        print('Error processing scrap document: $e');
+        return [];
+      }
+    });
+  }
+
+  // Add this method to combine all SOS requests
   Stream<List<SOSRequest>> _getAllSOSRequests() {
-    return Rx.combineLatest2(
+    return rxdart.Rx.combineLatest3(
       _getOnlineSOSRequests(),
       _getOfflineSOSRequests(),
-      (List<SOSRequest> online, List<SOSRequest> offline) {
-        return [...online, ...offline];
+      _getScrapSOSRequests(),
+      (List<SOSRequest> online, List<SOSRequest> offline,
+          List<SOSRequest> scrap) {
+        return [...online, ...offline, ...scrap];
       },
     );
   }
 
+  // Update the _updateSOSStatus method
+  void _updateSOSStatus(SOSRequest sos, String newStatus) {
+    setState(() {
+      sos.status = newStatus;
+      print('Status updated to: $newStatus'); // Debug print
+    });
+  }
+
+  // Update the _showSOSDetails method
   void _showSOSDetails(BuildContext context, SOSRequest sos) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Row(
           children: [
-            const Icon(Icons.warning_amber, color: Colors.red),
+            Icon(
+              sos.source == 'scrap' ? Icons.crisis_alert : Icons.warning_amber,
+              color: sos.source == 'scrap' ? Colors.blue : Colors.red,
+            ),
             const SizedBox(width: 8),
-            const Text('SOS Request'),
+            Text(sos.source == 'scrap' ? 'Search and Rescue' : 'SOS Request'),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Name: ${sos.name}'),
+            if (sos.name.isNotEmpty) Text('User: ${sos.name}'),
             const SizedBox(height: 8),
             Text('Message: ${sos.msg}'),
             const SizedBox(height: 8),
-            Text('Contact: ${sos.phone}'),
-            const SizedBox(height: 8),
-            Text(
-              'Time: ${sos.timestamp.toString()}',
-              style: const TextStyle(color: Colors.grey),
-            ),
+            if (sos.source == 'scrap' && sos.url.isNotEmpty)
+              Text('Source URL: ${sos.url}'),
+            if (sos.source != 'scrap') ...[
+              const SizedBox(height: 8),
+              Text(
+                'Status: ${_getStatusMessage(sos.status)}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ],
         ),
         actions: [
@@ -308,24 +337,100 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () => Navigator.pop(context),
             child: const Text('Close'),
           ),
-          ElevatedButton(
-            onPressed: () {
-              // Add call functionality here
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+          if (sos.source != 'scrap') ...[
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  sos.status = 'responding';
+                });
+                _startLocationTracking(sos);
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.yellow,
+              ),
+              child: const Text('Respond'),
             ),
-            child: const Text('Call'),
-          ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  sos.status = 'rescued';
+                });
+                _stopLocationTracking();
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+              child: const Text('Rescued'),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  // Add helper methods for status colors and messages
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'responding':
+        return Colors.yellow[700]!;
+      case 'rescued':
+        return Colors.green;
+      default:
+        return Colors.red;
+    }
+  }
+
+  String _getStatusMessage(String status) {
+    switch (status) {
+      case 'responding':
+        return 'Rescue team is on the way';
+      case 'rescued':
+        return 'Rescued';
+      default:
+        return 'Pending';
+    }
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Location permissions are permanently denied')));
+      return false;
+    }
+    return true;
+  }
+
+  // Update _startLocationTracking method
+  void _startLocationTracking(SOSRequest sos) async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return;
+
+    rescuerController.startTracking(sos);
+  }
+
+  void _stopLocationTracking() {
+    rescuerController.stopTracking();
   }
 
   @override
@@ -362,69 +467,104 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: FlutterMap(
-        options: MapOptions(
-          initialCenter: const LatLng(9.9312, 76.2673),
-          initialZoom: 12.0,
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-          ),
-          if (_selectedLayer == 'Both' || _selectedLayer == 'Heatmap Only')
-            HeatMapLayer(
-              heatMapDataSource: InMemoryHeatMapDataSource(data: data),
-              heatMapOptions: HeatMapOptions(
-                gradient: gradients,
-                minOpacity: 1,
-                radius: 90,
+      body: StreamBuilder<List<SOSRequest>>(
+        stream: _getAllSOSRequests(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error loading data'));
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final sosRequests = snapshot.data ?? [];
+          final heatmapData = _getHeatmapData(sosRequests);
+
+          return FlutterMap(
+            options: MapOptions(
+              initialCenter: const LatLng(9.9312, 76.2673),
+              initialZoom: 12.0,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
               ),
-              reset: _rebuildStream.stream,
-            ),
-          if (_selectedLayer == 'Both' || _selectedLayer == 'Markers Only')
-            StreamBuilder<List<SOSRequest>>(
-              stream: _getAllSOSRequests(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print('StreamBuilder error: ${snapshot.error}');
-                  return const SizedBox(); // Return empty widget instead of Text
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final sosRequests = snapshot.data ?? [];
-                print('Number of SOS requests: ${sosRequests.length}'); // Debug print
-
-                if (sosRequests.isEmpty) {
-                  print('No SOS requests found');
-                }
-
-                return MarkerLayer(
-                  markers: sosRequests.map((sos) => Marker(
-                    point: sos.location,
-                    width: 30,
-                    height: 30,
-                    child: GestureDetector(
-                      onTap: () => _showSOSDetails(context, sos),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.warning_amber,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  )).toList(),
-                );
-              },
-            ),
-        ],
+              if (_selectedLayer == 'Both' || _selectedLayer == 'Heatmap Only')
+                HeatMapLayer(
+                  heatMapDataSource:
+                      InMemoryHeatMapDataSource(data: heatmapData),
+                  heatMapOptions: HeatMapOptions(
+                    gradient: gradients,
+                    minOpacity: 1,
+                    radius: 90,
+                  ),
+                ),
+              if (_selectedLayer == 'Both' || _selectedLayer == 'Markers Only')
+                Obx(() => PolylineLayer(
+                      polylines: [
+                        if (rescuerController.routePoints.value != null)
+                          Polyline(
+                            points: rescuerController.routePoints.value!,
+                            strokeWidth: 4,
+                            color: Colors.blue,
+                            strokeCap: StrokeCap.round,
+                            strokeJoin: StrokeJoin.round,
+                            isDotted: false,
+                          ),
+                      ],
+                    )),
+              if (_selectedLayer == 'Both' || _selectedLayer == 'Markers Only')
+                Obx(() => MarkerLayer(
+                      markers: [
+                        ...List.generate(sosRequests.length, (index) {
+                          final sos = sosRequests[index];
+                          return Marker(
+                            point: sos.location,
+                            width: 30,
+                            height: 30,
+                            child: GestureDetector(
+                              onTap: () => _showSOSDetails(context, sos),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: sos.source == 'scrap'
+                                      ? Colors.blue
+                                      : Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  sos.source == 'scrap'
+                                      ? Icons.crisis_alert
+                                      : Icons.warning_amber,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                        if (rescuerController.location.value != null)
+                          Marker(
+                            point: rescuerController.location.value!,
+                            width: 30,
+                            height: 30,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.green,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.directions_run,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                      ],
+                    )),
+            ],
+          );
+        },
       ),
     );
   }
@@ -438,23 +578,103 @@ class _MyHomePageState extends State<MyHomePage> {
     return LatLng(
       original.latitude + latOffset,
       original.longitude + lngOffset,
-  );
+    );
   }
 }
 
+// Add this new class for location state management
+class RescuerController extends GetxController {
+  Rx<LatLng?> location = Rx<LatLng?>(null);
+  Rx<List<LatLng>?> routePoints = Rx<List<LatLng>?>(null);
+  Timer? _locationTimer;
+  late DatabaseReference databaseRef;
 
+  // Add your Mapbox access token
+  final String _mapboxToken =
+      'pk.eyJ1IjoiYW5hbmQxMDYiLCJhIjoiY2x1dXlwMGdiMGFnMjJxbW9jcWo2eXBjMCJ9.gBCavskm54ytN6xsD0CgXQ';
 
+  RescuerController() {
+    databaseRef = FirebaseDatabase.instance.ref();
+  }
 
+  Future<void> _updateRoute(LatLng rescuerLocation, LatLng sosLocation) async {
+    final url = 'https://api.mapbox.com/directions/v5/mapbox/driving/'
+        '${rescuerLocation.longitude},${rescuerLocation.latitude};'
+        '${sosLocation.longitude},${sosLocation.latitude}'
+        '?alternatives=true'
+        '&geometries=geojson'
+        '&overview=full'
+        '&steps=true'
+        '&access_token=$_mapboxToken';
 
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final route = RouteCoordinates.fromJson(data);
+        routePoints.value = route.points;
+      }
+    } catch (e) {
+      print('Error fetching route: $e');
+    }
+  }
 
+  void startTracking(SOSRequest sos) async {
+    _locationTimer?.cancel();
+    _locationTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      try {
+        final position = await Geolocator.getCurrentPosition();
+        location.value = LatLng(position.latitude, position.longitude);
 
+        await databaseRef.set({
+          'frLat': position.latitude,
+          'frLon': position.longitude,
+          'toLat': sos.location.latitude,
+          'toLon': sos.location.longitude,
+          'status': 'responding'
+        });
 
+        // Update route
+        if (location.value != null) {
+          await _updateRoute(location.value!, sos.location);
+        }
+      } catch (e) {
+        print('Error updating location: $e');
+      }
+    });
+  }
 
+  void stopTracking() async {
+    _locationTimer?.cancel();
+    await databaseRef.update({
+      'status': 'rescued',
+      'frLat': null,
+      'frLon': null,
+      'toLat': null,
+      'toLon': null
+    });
+    location.value = null;
+    routePoints.value = null;
+  }
 
+  @override
+  void onClose() {
+    _locationTimer?.cancel();
+    super.onClose();
+  }
+}
 
+// Add this class to handle route data
+class RouteCoordinates {
+  final List<LatLng> points;
 
+  RouteCoordinates({required this.points});
 
-
-
-
-
+  factory RouteCoordinates.fromJson(Map<String, dynamic> json) {
+    final route = json['routes'][0];
+    final coords = (route['geometry']['coordinates'] as List)
+        .map((coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()))
+        .toList();
+    return RouteCoordinates(points: coords);
+  }
+}

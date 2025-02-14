@@ -1,10 +1,30 @@
 {
   "project_info": {
     "project_number": "721981346070",
+    "firebase_url": "https://nearsq-default-rtdb.firebaseio.com",
     "project_id": "nearsq",
     "storage_bucket": "nearsq.firebasestorage.app"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721981346070:android:7f8b308fe970b7299d8037",
+        "android_client_info": {
+          "package_name": "com.example.heat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZxzJ-DJCMo73HZ26YCh4cIXpNfikgqQQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:721981346070:android:265fdb1a57cee41a9d8037",

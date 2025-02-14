@@ -44,19 +44,23 @@ class SendESP extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
+      child: SizedBox(
+        height: 150,
+        width: 250,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+          ),
+          onPressed: () => sendMessageToESP(
+            context,
+            '/6969/${location.latitude},${location.longitude}/6969/',
+          ),
+          child: Text("Offline SOS",
+              style: Theme.of(context)
+                .textTheme
+                .headlineLarge!
+                .apply(color: Colors.white)),
         ),
-        onPressed: () => sendMessageToESP(
-          context,
-          '/6969/${location.latitude},${location.longitude}/6969/',
-        ),
-        child: Text("Online SOS",
-            style: Theme.of(context)
-              .textTheme
-              .headlineLarge!
-              .apply(color: Colors.white)),
       ),
     );
   }

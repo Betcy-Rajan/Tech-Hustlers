@@ -11,21 +11,24 @@ import 'firebase_options.dart';
 import 'package:get/get.dart';
 
 Future<void> main() async {
-  //Widgets Binding
-  final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  //Initialize Local Storage
+  // Ensure Flutter is initialized
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Local Storage
   await GetStorage.init();
-  //Await Splash until other  items load
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  // Intialize FireBase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,).then(
-      (FirebaseApp value) => Get.put(AuthenticationRepository()),
+  
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
     );
-    
+    Get.put(AuthenticationRepository());
+  } catch (e) {
+    print('Firebase initialization error: $e');
+  }
+
   // await setUp();
   runApp(const MyApp());
-
 }
 // Future<void> setUp() async {
 //   await dotenv.load(fileName: ".env");

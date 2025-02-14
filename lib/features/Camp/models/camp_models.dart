@@ -21,8 +21,7 @@ class Camp {
       'name': name,
       'peopleAdmitted': peopleAdmitted,
       'deficientResources': deficientResources,
-      // 'latitude': latitude,
-      // 'longitude': longitude,
+
     };
   }
 

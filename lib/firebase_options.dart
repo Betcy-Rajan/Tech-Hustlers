@@ -54,6 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:721981346070:android:265fdb1a57cee41a9d8037',
     messagingSenderId: '721981346070',
     projectId: 'nearsq',
+    databaseURL: 'https://nearsq-default-rtdb.firebaseio.com',
     storageBucket: 'nearsq.firebasestorage.app',
   );
 
@@ -63,6 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '721981346070',
     projectId: 'nearsq',
     authDomain: 'nearsq.firebaseapp.com',
+    databaseURL: 'https://nearsq-default-rtdb.firebaseio.com',
     storageBucket: 'nearsq.firebasestorage.app',
   );
 

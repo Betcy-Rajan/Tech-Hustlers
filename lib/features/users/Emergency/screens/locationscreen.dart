@@ -159,25 +159,26 @@ class _LocationScreenState extends State<LocationScreen> {
                       const SizedBox(height: TSizes.spaceBtwSections),
 
                       // Offline SOS Button
-                      // Obx(() => locationController.isLoading.value
-                      //   ? const CircularProgressIndicator()
-                      //   : SizedBox(
-                      //       height: 150,
-                      //       width: 250,
-                      //       child: SendESP(
-                      //         location: LatLng(
-                      //           locationController.latitude.value,
-                      //           locationController.longitude.value
-                      //         ),
-                      //       ),
-                      //     )
-                      // ),
                       Obx(() => locationController.isLoading.value
-                          ? const CircularProgressIndicator()
-                          : SizedBox(
-                              height: 150,
-                              width: 250,
-                              child: SendESP(location: currentLocation))),
+                        ? const CircularProgressIndicator()
+                        : SizedBox(
+                            height: 150,
+                            width: 250,
+                            child: SendESP(
+                              location: LatLng(
+                                locationController.latitude.value,
+                                locationController.longitude.value
+                              ),
+                            ),
+                          )
+                      ),
+                      // Obx(() => locationController.isLoading.value
+                      //     ? const CircularProgressIndicator()
+                      //     :
+                      //      SizedBox(
+                      //         height: 150,
+                      //         width: 250,
+                      //         child: SendESP(location: currentLocation))),
                       const SizedBox(height: TSizes.spaceBtwItems),
                       Obx(() => Text(
                             'Location: ${locationController.latitude.value}, ${locationController.longitude.value}',

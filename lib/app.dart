@@ -5,12 +5,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:nearsq/bindings/general_bindings.dart';
 import 'package:nearsq/features/nearsq/screens/home/home.dart';
 
-import 'package:nearsq/navigation_drawer_widget.dart';
+
 
 // import 'package:nearsq/features/authentication/screens/onboarding/onboarding.dart';
-import 'package:nearsq/utilis/constants/colors.dart';
+
 import 'package:nearsq/utilis/theme/theme.dart';
-import 'package:provider/provider.dart';
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

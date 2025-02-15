@@ -35,10 +35,10 @@ class NavigationMenuOfficial extends StatelessWidget {
         backgroundColor: darkMode ? Colors.black : Colors.white,
         indicatorColor: darkMode ? TColors.white.withOpacity(0.1) : TColors.black.withOpacity(0.1),
         destinations: const  [
-           NavigationDestination(icon: Icon(Iconsax.home),label: 'Home',),
-           NavigationDestination(icon: Icon(Iconsax.shop),label: 'Heatmap',),
-           NavigationDestination(icon: Icon(Iconsax.heart),label: 'VolunteerMap',),
-           NavigationDestination(icon: Icon(Iconsax.user),label: 'Home',),
+             NavigationDestination(icon: Icon(Iconsax.warning_2),label: 'Heatmap',),
+             NavigationDestination(icon: Icon(Iconsax.building),label: 'Camp',),
+           NavigationDestination(icon: Icon(Iconsax.people),label: 'VolunteerMap',),
+           NavigationDestination(icon: Icon(Iconsax.user),label: 'Logout',),
         ]
       )),
       body: Obx(() => controller.screens[controller.selectedIndex.value])

@@ -44,10 +44,10 @@ class NavigationMenu extends StatelessWidget {
         indicatorColor: darkMode ? TColors.white.withOpacity(0.1) : TColors.black.withOpacity(0.1),
         destinations: const  [
            NavigationDestination(icon: Icon(Iconsax.home),label: 'Home',),
-           NavigationDestination(icon: Icon(Iconsax.shop),label: 'Emergency',),
-           NavigationDestination(icon: Icon(Iconsax.heart),label: 'Volunteer',),
+           NavigationDestination(icon: Icon(Iconsax.warning_2),label: 'Emergency',),
+             NavigationDestination(icon: Icon(Iconsax.people),label: 'Volunteer',),
            NavigationDestination(icon: Icon(Iconsax.user),label: 'Logout',),
-           NavigationDestination(icon: Icon(Iconsax.user),label: 'ChatBot',),
+             NavigationDestination(icon: Icon(Iconsax.message),label: 'ChatBot',),
 
         ]
       )),

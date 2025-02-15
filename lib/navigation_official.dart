@@ -7,6 +7,7 @@ import 'package:nearsq/features/Camp/screens/camp.dart';
 import 'package:nearsq/features/Camp/screens/campofficial.dart';
 import 'package:nearsq/features/personalization/screens/settings/settings.dart';
 import 'package:nearsq/features/nearsq/screens/home/home.dart';
+import 'package:nearsq/features/users/Logout/logout_official.dart';
 import 'package:nearsq/features/users/Volunteer/volunteer_map.dart';
 // import 'package:nearsq/features/shop/screens/nearsq/nearsq.dart';
 // import 'package:nearsq/features/shop/screens/whishlist/whishlist.dart';
@@ -46,7 +47,7 @@ class NavigationMenuOfficial extends StatelessWidget {
 }
 class NavigationMenuController extends GetxController {
   final RxInt selectedIndex = 0.obs;
-  final screens = [const MyHomePage(),CampScreenOfficial(),const VolunteerMap()];
+  final screens = [const MyHomePage(),CampScreenOfficial(),const VolunteerMap(), LogoutScreenOfficial()];
   void updateIndex(int index) {
     selectedIndex.value = index;
   }

@@ -2,7 +2,7 @@ class Camp {
   final String id;
   final String name;
   final int peopleAdmitted;
-  final String deficientResources;
+  final String location;
   // final double latitude;
   // final double longitude;
 
@@ -10,7 +10,8 @@ class Camp {
     required this.id,
     required this.name,
     required this.peopleAdmitted,
-    required this.deficientResources,
+    required this.location,
+    
     // required this.latitude,
     // required this.longitude,
   });
@@ -20,7 +21,7 @@ class Camp {
     return {
       'name': name,
       'peopleAdmitted': peopleAdmitted,
-      'deficientResources': deficientResources,
+      'location': location
 
     };
   }
@@ -32,7 +33,7 @@ class Camp {
       name: map['name'],
       peopleAdmitted: (map['peopleAdmitted'] as num).toInt(),
       // peopleAdmitted: map['peopleAdmitted'],
-      deficientResources: map['deficientResources'],
+      location:  map['location'],
       // latitude: map['latitude'],
       // longitude: map['longitude'],
     );

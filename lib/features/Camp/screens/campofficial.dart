@@ -123,7 +123,7 @@ import 'package:nearsq/features/Camp/models/camp_models.dart';
 import 'package:nearsq/utilis/constants/sizes.dart';
 import 'package:nearsq/utilis/validators/validation.dart';
 
-class CampScreen extends StatelessWidget {
+class CampScreenOfficial extends StatelessWidget {
   final CampController _campController = Get.put(CampController());
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _peopleController = TextEditingController();
@@ -142,69 +142,69 @@ class CampScreen extends StatelessWidget {
       body: Column(
         children: [
           // Form Section
-          // Padding(
-          //   padding: const EdgeInsets.all(TSizes.defaultSpace),
-          //   child: Form(
-          //     key: _campController.campFormKey,
-          //     child: Column(
-          //       children: [
-          //         // Camp Name
-          //         TextFormField(
-          //           controller: _nameController,
-          //           validator: (value) => TValidator.validateEmptyText(value, 'Camp Name'),
-          //           decoration: const InputDecoration(
-          //             hintText: 'Camp Name',
-          //             prefixIcon: Icon(Iconsax.home), // Use appropriate icon
-          //           ),
-          //         ),
-          //         const SizedBox(height: TSizes.spaceBtwInputFields),
+          Padding(
+            padding: const EdgeInsets.all(TSizes.defaultSpace),
+            child: Form(
+              key: _campController.campFormKey,
+              child: Column(
+                children: [
+                  // Camp Name
+                  TextFormField(
+                    controller: _nameController,
+                    validator: (value) => TValidator.validateEmptyText(value, 'Camp Name'),
+                    decoration: const InputDecoration(
+                      hintText: 'Camp Name',
+                      prefixIcon: Icon(Iconsax.home), // Use appropriate icon
+                    ),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwInputFields),
 
-          //         // People Admitted
-          //         TextFormField(
-          //           controller: _peopleController,
-          //           validator: (value) => TValidator.validateEmptyText(value, 'People Admitted'),
-          //           keyboardType: TextInputType.number,
-          //           decoration: const InputDecoration(
-          //             hintText: 'People Admitted',
-          //             prefixIcon: Icon(Iconsax.people), // Use appropriate icon
-          //           ),
-          //         ),
-          //         const SizedBox(height: TSizes.spaceBtwInputFields),
+                  // People Admitted
+                  TextFormField(
+                    controller: _peopleController,
+                    validator: (value) => TValidator.validateEmptyText(value, 'People Admitted'),
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'People Admitted',
+                      prefixIcon: Icon(Iconsax.people), // Use appropriate icon
+                    ),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwInputFields),
 
-          //         // Deficient Resources
-          //         TextFormField(
-          //           controller: _locationController,
-          //           validator: (value) => TValidator.validateEmptyText(value, 'location'),
-          //           decoration: const InputDecoration(
-          //             hintText: 'Location',
-          //             prefixIcon: Icon(Iconsax.warning_2), // Use appropriate icon
-          //           ),
-          //         ),
-          //         const SizedBox(height: TSizes.spaceBtwInputFields),
+                  // Deficient Resources
+                  TextFormField(
+                    controller: _locationController,
+                    validator: (value) => TValidator.validateEmptyText(value, 'location'),
+                    decoration: const InputDecoration(
+                      hintText: 'Location',
+                      prefixIcon: Icon(Iconsax.warning_2), // Use appropriate icon
+                    ),
+                  ),
+                  const SizedBox(height: TSizes.spaceBtwInputFields),
 
-          //         // Submit Button
-          //         SizedBox(
-          //           width: double.infinity,
-          //           child: ElevatedButton(
-          //             onPressed: () {
-          //               final camp = Camp(
-          //                 id: '', // Firestore will generate the ID
-          //                 name: _nameController.text,
-          //                 peopleAdmitted: int.tryParse(_peopleController.text) ?? 0,
-          //                 location: _locationController.text,
-          //               );
-          //               _campController.addCamp(camp);
-          //               _nameController.clear();
-          //               _peopleController.clear();
-          //               _locationController.clear();
-          //             },
-          //             child: Text('Add Camp'),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
+                  // Submit Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final camp = Camp(
+                          id: '', // Firestore will generate the ID
+                          name: _nameController.text,
+                          peopleAdmitted: int.tryParse(_peopleController.text) ?? 0,
+                          location: _locationController.text,
+                        );
+                        _campController.addCamp(camp);
+                        _nameController.clear();
+                        _peopleController.clear();
+                        _locationController.clear();
+                      },
+                      child: Text('Add Camp'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Expanded(
   child: Obx(() {
     if (_campController.camps.isEmpty) {
@@ -250,23 +250,23 @@ class CampScreen extends StatelessWidget {
                 ),
               ],
             ),
-    //             trailing: IconButton(
-    //               icon: Icon(Icons.delete, color: Colors.red),
-    //               onPressed: () {
-    //     // Show confirmation dialog before deleting
-    //     Get.defaultDialog(
-    //       title: 'Delete Camp',
-    //       content: Text('Are you sure you want to delete ${camp.name}?'),
-    //       textConfirm: 'Delete',
-    //       textCancel: 'Cancel',
-    //       confirmTextColor: Colors.white,
-    //       onConfirm: () {
-    //         _campController.deleteCamp(camp.id);
-    //         Get.back(); // Close the dialog
-    //       },
-    //     );
-    //   },
-    // ),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+        // Show confirmation dialog before deleting
+        Get.defaultDialog(
+          title: 'Delete Camp',
+          content: Text('Are you sure you want to delete ${camp.name}?'),
+          textConfirm: 'Delete',
+          textCancel: 'Cancel',
+          confirmTextColor: Colors.white,
+          onConfirm: () {
+            _campController.deleteCamp(camp.id);
+            Get.back(); // Close the dialog
+          },
+        );
+      },
+    ),
           ),
           
         );

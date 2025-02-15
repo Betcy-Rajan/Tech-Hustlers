@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 
 import 'package:iconsax/iconsax.dart';
 import 'package:nearsq/features/Camp/screens/camp.dart';
+import 'package:nearsq/features/Camp/screens/campofficial.dart';
 import 'package:nearsq/features/personalization/screens/settings/settings.dart';
 import 'package:nearsq/features/nearsq/screens/home/home.dart';
+import 'package:nearsq/features/users/Volunteer/volunteer_map.dart';
 // import 'package:nearsq/features/shop/screens/nearsq/nearsq.dart';
 // import 'package:nearsq/features/shop/screens/whishlist/whishlist.dart';
 import 'package:nearsq/utilis/constants/colors.dart';
@@ -34,7 +36,7 @@ class NavigationMenuOfficial extends StatelessWidget {
         destinations: const  [
            NavigationDestination(icon: Icon(Iconsax.home),label: 'Home',),
            NavigationDestination(icon: Icon(Iconsax.shop),label: 'Heatmap',),
-           NavigationDestination(icon: Icon(Iconsax.heart),label: 'Camps',),
+           NavigationDestination(icon: Icon(Iconsax.heart),label: 'VolunteerMap',),
            NavigationDestination(icon: Icon(Iconsax.user),label: 'Home',),
         ]
       )),
@@ -44,7 +46,7 @@ class NavigationMenuOfficial extends StatelessWidget {
 }
 class NavigationMenuController extends GetxController {
   final RxInt selectedIndex = 0.obs;
-  final screens = [const MyHomePage(),CampScreen(),const SettingsScreen()];
+  final screens = [const MyHomePage(),CampScreenOfficial(),const VolunteerMap()];
   void updateIndex(int index) {
     selectedIndex.value = index;
   }

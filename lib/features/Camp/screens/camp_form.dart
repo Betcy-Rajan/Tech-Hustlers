@@ -53,9 +53,9 @@ class CampForm extends StatelessWidget {
               // Deficient Resources
               TextFormField(
                 controller: _resourcesController,
-                validator: (value) => TValidator.validateEmptyText(value, 'Deficient Resources'),
+                validator: (value) => TValidator.validateEmptyText(value, 'location'),
                 decoration: const InputDecoration(
-                  hintText: 'Deficient Resources',
+                  hintText: 'Location',
                   prefixIcon: Icon(Iconsax.warning_2), // Use appropriate icon
                 ),
               ),
@@ -70,7 +70,7 @@ class CampForm extends StatelessWidget {
                     id: '', // Firestore will generate the ID
                     name: _nameController.text,
                     peopleAdmitted: int.tryParse(_peopleController.text) ?? 0,
-                    deficientResources: _resourcesController.text,);
+                    location: _resourcesController.text,);
                     controller.addCamp(camp);
                   },
                   child: Text('Add Camp'),

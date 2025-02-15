@@ -48,4 +48,12 @@ class CampController extends GetxController {
       print('Error fetching camps: $e'); // Log any errors
     }
   }
+  Future<void> deleteCamp(String campId) async {
+    try {
+      await _firestore.collection('camp').doc(campId).delete();
+      fetchCamps(); // Refresh the list after deletion
+    } catch (e) {
+      print('Error deleting camp: $e');
+    }
+  }
 }

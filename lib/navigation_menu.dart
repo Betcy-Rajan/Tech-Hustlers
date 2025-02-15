@@ -10,6 +10,7 @@ import 'package:nearsq/features/users/Emergency/screens/locationscreen.dart';
 import 'package:nearsq/features/Camp/screens/camp.dart';
 import 'package:nearsq/features/personalization/screens/settings/settings.dart';
 import 'package:nearsq/features/users/Logout/logout_screen.dart';
+import 'package:nearsq/features/users/Volunteer/screen/volunteer_registration.dart';
 // import 'package:nearsq/features/nearsq/screens/home/home.dart';
 // import 'package:nearsq/features/shop/screens/nearsq/nearsq.dart';
 // import 'package:nearsq/features/shop/screens/whishlist/whishlist.dart';
@@ -43,7 +44,7 @@ class NavigationMenu extends StatelessWidget {
         destinations: const  [
            NavigationDestination(icon: Icon(Iconsax.home),label: 'Home',),
            NavigationDestination(icon: Icon(Iconsax.shop),label: 'Emergency',),
-           NavigationDestination(icon: Icon(Iconsax.heart),label: 'Home',),
+           NavigationDestination(icon: Icon(Iconsax.heart),label: 'Volunteer',),
            NavigationDestination(icon: Icon(Iconsax.user),label: 'Logout',),
         ]
       )),
@@ -53,7 +54,7 @@ class NavigationMenu extends StatelessWidget {
 }
 class NavigationMenuController extends GetxController {
   final RxInt selectedIndex = 0.obs;
-  final screens = [LocationScreen(),CampScreen(),const SettingsScreen(), LogoutScreen()];
+  final screens = [LocationScreen(),CampScreen(),const VolunteerRegistrationForm(), LogoutScreen()];
   void updateIndex(int index) {
     selectedIndex.value = index;
   }

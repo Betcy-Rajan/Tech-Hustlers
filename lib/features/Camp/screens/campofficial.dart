@@ -128,6 +128,7 @@ class CampScreenOfficial extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _peopleController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -141,6 +142,29 @@ class CampScreenOfficial extends StatelessWidget {
       ),
       body: Column(
         children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(TSizes.defaultSpace),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search by location...',
+                
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    // Trigger search when icon is clicked
+                    _campController.searchCampsByLocation(_searchController.text);
+                  },
+                ),
+              ),
+              onSubmitted: (value) {
+                // Also trigger search when user presses enter
+                _campController.searchCampsByLocation(value);
+              },
+            ),
+          ),
           // Form Section
           Padding(
             padding: const EdgeInsets.all(TSizes.defaultSpace),
@@ -206,94 +230,77 @@ class CampScreenOfficial extends StatelessWidget {
             ),
           ),
           Expanded(
-  child: Obx(() {
-    if (_campController.camps.isEmpty) {
-      return Center(child: Text('No camps found')); // Show a message if no camps are found
-    }
+            child: Obx(() {
+              final campsToShow = _campController.searchQuery.isEmpty 
+                  ? _campController.camps 
+                  : _campController.filteredCamps;
 
-    return ListView.builder(
-      itemCount: _campController.camps.length,
-      itemBuilder: (ctx, index) {
-        final camp = _campController.camps[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          elevation: 2,
-          color: Colors.blue.shade50, // Light blue background for the tile
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            title: Text(
-              camp.name,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade900, // Dark blue text for the title
-              ),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Text(
-                  'People Admitted: ${camp.peopleAdmitted}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700, // Grey text for people admitted
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Location ${camp.location}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade700, // Grey text for deficient resources
-                  ),
-                ),
-              ],
-            ),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-        // Show confirmation dialog before deleting
-        Get.defaultDialog(
-          title: 'Delete Camp',
-          content: Text('Are you sure you want to delete ${camp.name}?'),
-          textConfirm: 'Delete',
-          textCancel: 'Cancel',
-          confirmTextColor: Colors.white,
-          onConfirm: () {
-            _campController.deleteCamp(camp.id);
-            Get.back(); // Close the dialog
-          },
-        );
-      },
-    ),
+              if (campsToShow.isEmpty) {
+                return Center(child: Text('No camps found'));
+              }
+
+              return ListView.builder(
+                itemCount: campsToShow.length,
+                itemBuilder: (ctx, index) {
+                  final camp = campsToShow[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    elevation: 2,
+                    color: Colors.blue.shade50, // Light blue background for the tile
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16),
+                      title: Text(
+                        camp.name,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade900, // Dark blue text for the title
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          Text(
+                            'People Admitted: ${camp.peopleAdmitted}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade700, // Grey text for people admitted
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Location ${camp.location}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade700, // Grey text for deficient resources
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          // Show confirmation dialog before deleting
+                          Get.defaultDialog(
+                            title: 'Delete Camp',
+                            content: Text('Are you sure you want to delete ${camp.name}?'),
+                            textConfirm: 'Delete',
+                            textCancel: 'Cancel',
+                            confirmTextColor: Colors.white,
+                            onConfirm: () {
+                              _campController.deleteCamp(camp.id);
+                              Get.back(); // Close the dialog
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
           ),
-          
-        );
-      },
-    );
-  }),
-),
-
-          // List of Camps
-          // Expanded(
-          //   child: Obx(() {
-          //     if (_campController.camps.isEmpty) {
-          //       return Center(child: Text('No camps found')); // Show a message if no camps are found
-          //     }
-              
-          //     return ListView.builder(
-          //       itemCount: _campController.camps.length,
-          //       itemBuilder: (ctx, index) {
-          //         final camp = _campController.camps[index];
-          //         return ListTile(
-          //           title: Text(camp.name),
-          //           subtitle: Text('People Admitted: ${camp.peopleAdmitted}\nDeficient Resources: ${camp.deficientResources}'),
-          //         );
-          //       },
-          //     );
-          //   }),
-          // ),
         ],
       ),
     );

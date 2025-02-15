@@ -26,8 +26,27 @@ import 'package:nearsq/features/Camp/models/camp_models.dart';
 class CampController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   var camps = <Camp>[].obs;
-
+  var searchQuery = ''.obs;
   get campFormKey => null;
+
+  RxList<Camp> filteredCamps = <Camp>[].obs;
+  
+  void searchCampsByLocation(String query) {
+    searchQuery.value = query;
+    if (query.isEmpty) {
+      filteredCamps.assignAll(camps);
+    } else {
+      filteredCamps.assignAll(camps.where((camp) => 
+        camp.location.toLowerCase().contains(query.toLowerCase())
+      ).toList());
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    filteredCamps.assignAll(camps);
+  }
 
   // Add a new camp to Firestore
   Future<void> addCamp(Camp camp) async {
